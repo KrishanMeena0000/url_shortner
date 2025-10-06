@@ -1,0 +1,11 @@
+# Netlify configuration file
+
+[build]
+  # This is the directory to run the build command in
+  base = "frontend"
+
+  # This is the command to build your site
+  command = "npm run build"
+
+  # This is the directory to publish after the build is complete
+  publish = "frontend/build"
