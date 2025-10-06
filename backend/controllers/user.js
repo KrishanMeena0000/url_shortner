@@ -58,16 +58,20 @@ async function handleUserLogin(req, res) {
     const sessionId = uuidv4();
     await setUser(sessionId, user);
 
-    // Send JSON instead of redirect
-    res.cookie("uid", sessionId, { httpOnly: true });
+    // Send cookie with cross-site security settings
+    res.cookie("uid", sessionId, {
+      httpOnly: true,
+      secure: true,   // <-- Add this line
+      sameSite: 'none' // <-- Add this line
+    });
+
     console.log("Login response:", { token: sessionId, user });
     console.log("Sending JSON response with:", {
-  token: sessionId,
-  user: { id: user._id, name: user.name, email: user.email }
-});
+      token: sessionId,
+      user: { id: user._id, name: user.name, email: user.email }
+    });
 
     return res.json({
-      // token: sessionId,
       user: {
         id: user._id,
         name: user.name,
@@ -81,4 +85,4 @@ async function handleUserLogin(req, res) {
   }
 }
 
-module.exports = {handleUserLogin,handleUserSignup};
+module.exports = { handleUserLogin, handleUserSignup };
