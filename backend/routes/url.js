@@ -8,6 +8,7 @@ const {
 const { restrictToLoggedinUserOnly } = require("../middlewares/auth");
 
 const router = express.Router();
+// router.use(restrictToLoggedinUserOnly);  
 
 router.post("/urls", restrictToLoggedinUserOnly, handleGenerateNewShortURL);
 router.get('/urls', restrictToLoggedinUserOnly, listUrls)

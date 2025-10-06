@@ -1,5 +1,6 @@
 const express = require("express");
-const path = require("path");
+require("dotenv").config();
+
 const cookieParser = require("cookie-parser");
 const { connectToMongoDB } = require("./db");
 const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
@@ -27,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/api/user", userRoute);
-app.use("/api", restrictToLoggedinUserOnly, urlRoute);
+app.use("/api", urlRoute);
 
 app.get("/:shortId", async (req, res) => {
   const shortId = req.params.shortId;

@@ -1,28 +1,40 @@
 const shortid = require("shortid");
 const URL = require("../models/url");
 
+// In backend/controllers/url.js
+
 async function handleGenerateNewShortURL(req, res) {
   const { longUrl, customAlias } = req.body;
-  if (!longUrl) return res.status(400).json({ error: "url is required" });
-  const shortID = customAlias && customAlias.trim() !== "" ? customAlias : shortid.generate();
+  if (!longUrl) {
+    return res.status(400).json({ error: "URL is required" });
+  }
 
   try {
+    // If a custom alias is provided, create it and STOP.
+    if (customAlias && customAlias.trim() !== "") {
+      const newUrl = await URL.create({
+        shortId: customAlias.trim(),
+        redirectURL: longUrl,
+        visitHistory: [],
+        createdBy: req.user._id,
+      });
+      return res.status(201).json(newUrl); // <-- Return immediately
+    }
+
+    // If no custom alias, create a random one.
+    const shortID = shortid.generate();
     const newUrl = await URL.create({
       shortId: shortID,
       redirectURL: longUrl,
       visitHistory: [],
       createdBy: req.user._id,
     });
-    
-    return res.json(newUrl);
+    return res.status(201).json(newUrl);
 
   } catch (e) {
-    // Check if the error is a duplicate key error
     if (e.code === 11000) {
       return res.status(409).json({ error: "Alias is already in use. Please choose another." });
     }
-
-    // For all other errors, send a generic 500 error
     console.error("ERROR CREATING URL:", e);
     return res.status(500).json({ error: "An internal server error occurred." });
   }
