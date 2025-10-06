@@ -8,4 +8,4 @@
   command = "npm run build"
 
   # This is the directory to publish after the build is complete
-  publish = "frontend/build"
+  publish = "build"
